@@ -142,21 +142,23 @@ class Polynomial:
         else:
             return res.der(d - 1)
         
-    def __mul__(self, other): 
+    def __mul__(self, other):
         self = Polynomial(self)
         other = Polynomial(other)
-        res = [0 for i in range(self.degree() + other.degree())]
+        if other.degree() > self.degree():
+            self1 = other
+            other1 = self
+        else:
+            self1 = self
+            other1 = other
+        res = [0 for i in range(self.degree() + other.degree() + 1)]
         for i in range(len(res)):
-            for j in range(i + 1):
-                res[i] += self.coef[j] * other.coef[i - j]
+            for j in range(max(0, i - other1.degree()), min(self1.degree() + 1, i + 1)):
+                res[i] += self1.coef[j] * other1.coef[i - j]
         return Polynomial(res)
-
+    
     def __rmul__(self, other):
-        res = [0 for i in range(self.degree() + other.degree())]
-        for i in range(len(res)):
-            for j in range(i + 1):
-                res[i] += self.coef[j] * other.coef[i - j]
-        return Polynomial(res)
+        return other * self    
     
     def __mod__(self, other):
         pass
